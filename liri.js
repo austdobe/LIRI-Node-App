@@ -1,5 +1,6 @@
 //Set variable environment
 require("dotenv").config();
+var fs = require("fs");
 var axios = require("axios")
 var Spotify = require("node-spotify-api")
 var moment = require("moment")
@@ -24,43 +25,72 @@ case "band":
 case "movie":
     movieSearch();
     break;
+case "do": 
+    do_what_it_says();
+    break;
 default:
-    console.log("Sorry that is an incorrect search, please try spotify, band, or movie.")
+    log("Sorry, that is incorrect! Self-distruct mode activated in 3...2....1.... ")
     break;
 }
 
 
 //Set axios call for music using spotify API
 function musicSearch(){
-    spotify.search({type: "track", query: search}).then(function(response) {
-        var song = response.tracks.items
-        console.log("Artist: " + song[0].artists[0].name)
-        console.log("Song Name: "+ song[0].name)
-        console.log("Song Link: "+ song[0].url)
-        console.log("Album: "+ song.album)
-        }
-    ).catch(function(err) {
-    console.error('Error occurred: ' + err); 
-    });
+    if (!search){
+        search = "The Sign Ace of Base"
+    }
+        spotify.search({type: "track", query: search}).then(function(response) {
+            var song = response.tracks.items
+            log("Artist: " + song[0].artists[0].name + ", ")
+            log("Song Name: "+ song[0].name + ", ")
+            log("Song Link: "+ song[0].external_urls.spotify + ", ")
+            log("Album: "+ song[0].album.name + ", ")
+            }
+        ).catch(function(error){
+            if (error.response){
+        
+                log(error.response.data+ ", ");
+                log(error.response.status+ ", ");
+                log(error.response.headers+ ", ")
+            } else if (error.request){
+                log(error.request+ ", ")
+            } else {
+                log("Error", error.massage+ ", ");
+            }
+            log(error.config+ ", ");
+        });
 }
 //set axios call for concerts using bands-in-town API
 function movieSearch(){
-    axios.get("http://www.omdbapi.com").then(
+    if(!search){
+        search = "Mr. Nobody"
+    }
+    axios.get("http://www.omdbapi.com/?t=" + search + "&y=&plot=short&apikey=trilogy").then(
         function(response){
-            console.log(response.data)
+            var movie = response.data
+            // log(movie)
+            log("Title: " + movie.Title + ", ")
+            log("Year: " + movie.Year + ", ")
+            log("Rating: " + movie.imdbRating + ", ")
+            log("Rotten Tomatos Rating: " + movie.Ratings[1].Value + ", ")
+            log("Production Country: " + movie.Country + ", ")
+            log("Language: " + movie.Language + ", ")
+            log("Plot: " + movie.Plot + ", ")
+            log("Actors: " + movie.Actors + ", ")
+            
         }
     ).catch(function(error){
         if (error.response){
     
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers)
+            log(error.response.data+ ", ");
+            log(error.response.status+ ", ");
+            log(error.response.headers+ ", ")
         } else if (error.request){
-            console.log(error.request)
+            log(error.request+ ", ")
         } else {
-            console.log("Error", error.massage);
+            log("Error", error.massage+ ", ");
         }
-        console.log(error.config);
+        log(error.config+ ", ");
     });
     
     }
@@ -69,19 +99,19 @@ function movieSearch(){
 function bandSearch(){
     axios.get("https://rest.bandsintown.com/artists/"+ search + "/events?app_id=triology&date=upcoming").then(
         function(response){
+            //establish base start point
             var event = response.data;
-            for (var i = 0; i < 1; i++) {
-                console.log(event)
 
-            
-                console.log("Venue Name: "+ event[i].venue.name);
-                console.log("Venue Location: " + event[i].venue.city + ", " + event[i].venue.country);
-                console.log("Date and Time: "+moment(event[i].datetime).format("llll"))
+            for (var i = 0; i < 1; i++) {
+                
+                log("Venue Name: "+ event[i].venue.name + ", ");
+                log("Venue Location: " + event[i].venue.city + ", " + event[i].venue.country+ ", ");
+                log("Date and Time: "+moment(event[i].datetime).format("llll") + ", ")
                 
             //show URL to purchase tickets
-                // console.log("Purchase Ticket: "+JSON.parse(event[i].offers.url))
+                // log("Purchase Ticket: "+JSON.parse(event[i].offers.url))
                 // var ticket = JSON.parse(event[i].offers)
-                // console.log("Purchase Ticket: "+ ticket.url)
+                // log("Purchase Ticket: "+ ticket.url)
             
             
             }
@@ -89,49 +119,42 @@ function bandSearch(){
     ).catch(function(error){
         if (error.response){
     
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers)
+            log(error.response.data+ ", ");
+            log(error.response.status+ ", ");
+            log(error.response.headers+ ", ")
         } else if (error.request){
-            console.log(error.request)
+            log(error.request+ ", ")
         } else {
-            console.log("Error", error.massage);
+            log("Error", error.massage+ ", ");
         }
-        console.log(error.config);
+        log(error.config+ ", ");
     });
     
     }
 
-//Set axios call to connect with random.txt.
-// function musicSearch(){
-//     axios.get("https://api.spotify.com/v1/browse/categories/" + search + "/playlists"+spotify).then(
-//         function(response){
-//             console.log(response.data)
-//         }
-//     ).catch(function(error){
-//         if (error.response){
+// Set axios call to connect with random.txt.
+function do_what_it_says(){
+        fs.readFile("random.txt", "utf8", function(err, data){
+            if(err){
+                log(err + ", ")
+            }
+            var arr = data.split(",")
+            search = arr[1]
+            musicSearch(search)
+
+        })
     
-//             console.log(error.response.data);
-//             console.log(error.response.status);
-//             console.log(error.response.headers)
-//         } else if (error.request){
-//             console.log(error.request)
-//         } else {
-//             console.log("Error", error.massage);
-//         }
-//         console.log(error.config);
-//     });
     
-//     }
+    };
 
 //Add data to log.txt which appends the information to keep a history
-function logThis (logQuery) {
+function log (logQuery) {
 
     console.log(logQuery);
 
     fs.appendFile("log.txt", logQuery, function(err) {
         if (err) {
-            return logThis("Error: " + err);
+            return logThis("Error: " + err + ", ");
         }
     });
 };
