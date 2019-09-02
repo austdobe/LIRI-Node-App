@@ -16,16 +16,16 @@ var search= process.argv[3];
 var parameters=process.argv[2]
 
 switch (parameters){
-case "spotify":
+case "spotify-this-song":
     musicSearch()
     break;
-case "band":
+case "concert-this":
     bandSearch();
     break;
-case "movie":
+case "movie-this":
     movieSearch();
     break;
-case "do": 
+case "do-what-it-says": 
     do_what_it_says();
     break;
 default:
