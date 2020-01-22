@@ -1,6 +1,6 @@
 # LIRI-Node-App
 
-A custom made LIRI assistant using node.js. Liri is here to help you gather information pretaining to Concerts, music and movies. Liri is connected to three different API's to help gather the information. The API's are bandsintown, spotify, and omdb. You can access the API's using the following commands:
+A custom made LIRI assistant using node.js. Liri is here to help you gather information pretaining to concerts, music and movies. Liri is connected to three different API's to help gather the information. The API's are bandsintown, spotify, and omdb. You can access the API's using the following commands:
 
    * `concert-this`
 
