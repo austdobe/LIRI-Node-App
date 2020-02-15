@@ -29,3 +29,6 @@ node liri.js do-what-it-
 Future features will be "easter eggs" Liri will have a predetermined phrase to answer a question you have asked, or a comment you have made.
 
 
+## Demo
+
+![Liri-Node Demo](liriDemo.gif)
